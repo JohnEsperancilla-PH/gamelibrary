@@ -1,5 +1,5 @@
 <?php
-session_start();
+include 'login-checker.php'; // Include the login checker
 include 'db.php'; // Include your database connection file
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

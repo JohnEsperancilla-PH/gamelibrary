@@ -2,6 +2,12 @@
 include 'db.php'; // Include your database connection file
 include 'checker.php';
 
+// Check if the user is an admin
+if ($_SESSION['role'] !== 'admin') {
+    header("Location: view-games.php"); // Redirect to a different page if not an admin
+    exit();
+}
+
 // Handle adding a new game
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_game'])) {
     $title = $_POST['title'];
