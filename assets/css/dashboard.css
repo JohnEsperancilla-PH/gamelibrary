@@ -1,0 +1,157 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    overflow: hidden;
+}
+
+/* Header Styles */
+header {
+    background: #35424a;
+    color: #ffffff;
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.logout-button {
+    float: right;
+    background: #e8491d;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s; /* Added transform */
+}
+
+.logout-button:hover {
+    background-color: #c0392b; /* Darker shade on hover */
+    transform: scale(1.05); /* Slightly enlarge button on hover */
+}
+
+/* Content Styles */
+.content {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+/* Panel Styles */
+.panel {
+    background: white;
+    border-radius: 8px; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 10px;
+    flex-grow: 1; 
+}
+
+/* Panel Header */
+.panel h2 {
+    color: #35424a;
+}
+
+/* Form Styles */
+form {
+    display: flex; 
+    flex-direction: column; 
+}
+
+input[type="text"],
+input[type="number"] {
+    padding: 10px; 
+    margin-bottom: 15px; 
+    border-radius: 5px; 
+    border: 1px solid #ddd; 
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+    border-color: #35424a; /* Highlight on focus */
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse; 
+}
+
+th, td {
+    border-bottom: 1px solid #ddd; 
+    padding: 12px; 
+}
+
+th {
+    background-color: #35424a;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9; 
+}
+
+tr:hover {
+   background-color: #f1f1f1; 
+}
+
+/* Button Styles */
+button {
+    background-color: #35424a;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s; /* Added transform */
+}
+
+button:hover {
+   background-color: #2c3e50; 
+   transform: scale(1.05); /* Slightly enlarge button on hover */
+}
+
+/* Link Styles */
+a {
+   color: #35424a; 
+   text-decoration: none; 
+   transition: text-decoration 0.3s, color 0.3s; /* Smooth transition for hover */
+}
+
+a:hover {
+   text-decoration: underline; 
+   color: #e8491d; /* Change color on hover for distinction */
+}
+
+/* Alert Message Styles */
+.alert {
+   background-color: #e7f3fe; /* Light blue background for alerts */
+   color: #31708f; /* Darker blue text */
+   padding: 15px;
+   margin-bottom: 20px;
+   border-left: 6px solid #31708f; /* Left border for emphasis */
+   border-radius: 5px; /* Rounded corners */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+   .content {
+       flex-direction: column; 
+   }
+   .panel {
+       margin-bottom: 20px; 
+   }
+
+   .logout-button {
+       float:none; /* Stack logout button on smaller screens */
+       display:block; /* Center logout button on small screens */
+       margin-top :10px ; /* Add spacing above logout button */
+   }
+}
