@@ -1,7 +1,6 @@
 <?php
-session_start();
 include 'db.php'; // Include your database connection file
-include 'session-check.php'; // Ensure the user is logged in as admin
+include 'checker.php';
 
 // Handle adding a new game
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_game'])) {

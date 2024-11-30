@@ -1,7 +1,6 @@
 <?php
-session_start();
 include 'db.php'; // Include your database connection file
-include 'session-check.php'; // The checker class for user login session check
+include 'checker.php';
 
 // Fetch games
 $sql = "SELECT * FROM tbl_games";
