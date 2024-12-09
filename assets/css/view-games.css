@@ -1,55 +1,96 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa; /* Light background */
     margin: 0;
     padding: 20px;
 }
 
 h1 {
     text-align: center;
-    color: #333;
+    color: #343a40; /* Darker text */
+    margin-bottom: 20px;
 }
 
 .game-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 20px;
-    padding: 20px;
 }
 
 .game-card {
-    background-color: white;
-    border-radius: 2px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     text-align: center;
-    transition: transform 0.2s;
-    cursor: pointer; /* Change cursor to pointer */
+    transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for hover effects */
 }
 
 .game-card:hover {
-    transform: scale(1.05);
+    transform: translateY(-5px); /* Lift effect on hover */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .game-card img {
     width: 100%;
     height: auto;
+    border-bottom: 4px solid #007bff; /* Blue accent line */
 }
 
 .game-title {
-    padding: 10px;
+    padding: 15px;
     font-weight: bold;
-    color: #333;
+    color: #343a40;
+    font-size: 1.2em; /* Larger font size */
 }
 
 .no-games {
     text-align: center;
     font-style: italic;
-    color: #777;
+    color: #6c757d; /* Muted text */
     grid-column: span 4; /* Span all columns */
 }
 
-/* Overlay styles */
+.search-form {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.search-form input[type="text"] {
+    padding: 10px;
+    border-radius: 0.5rem;
+    border: 1px solid #ced4da;
+    width: 300px; /* Fixed width for search input */
+}
+
+.search-form button,
+.reset-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 0.5rem;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.search-form button:hover,
+.reset-button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+    transform: scale(1.05);
+}
+
+.reset-button {
+    background-color: #e8491d; /* Reset button color */
+}
+
+.reset-button:hover {
+    background-color: #c0392b; /* Darker shade on hover */
+}
+
+/* Overlay Styles */
 .overlay {
     display: none; /* Hidden by default */
     position: fixed;
@@ -58,70 +99,97 @@ h1 {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
-    z-index: 1000;
     justify-content: center;
     align-items: center;
+    z-index: 1000;
 }
 
 .overlay-content {
-    background-color: white;
-    border-radius: 2px;
+    background: white;
     padding: 20px;
-    width: 400px;
-    display: flex;
-    gap: 20px; /* Space between image and text */
-}
-
-.overlay-content img {
-    width: 200px; /* Fixed width for the image */
-    height: auto;
+    border-radius: 0.5rem;
+    text-align: center;
 }
 
 .close-btn {
     cursor: pointer;
-    color: red;
-    font-weight: bold;
+    color: #007bff;
     margin-top: 10px;
-    text-align: center;
 }
 
-/* Additional styles for user profile settings */
-.profile-settings {
-    position: relative;
-    display: inline-block;
-    margin: 20px;
+.navbar {
+    display: flex;
+    justify-content: space-between; /* Space between logout and search */
+    align-items: center; /* Center items vertically */
+    margin-bottom: 20px; /* Space below navbar */
 }
 
-.profile-button {
-    background-color: #007bff;
+.logout-button {
+    background-color: #e8491d; /* Logout button color */
     color: white;
     border: none;
     padding: 10px 15px;
-    border-radius: 5px;
+    border-radius: 0.5rem;
     cursor: pointer;
 }
 
-.dropdown {
-    display: none;
-    position: absolute;
-    right: 0;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
+.logout-button:hover {
+    background-color: #c0392b; /* Darker shade on hover */
 }
 
-.dropdown a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
+.sort-button {
+    position: relative; /* Positioning for the dropdown */
+    display: inline-block; /* Align with the search bar */
+    margin-right: 10px; /* Space between sort button and search bar */
 }
 
-.dropdown a:hover {
-    background-color: #f1f1f1;
+.sort-button button {
+    background-color: #007bff; /* Button color */
+    color: white; /* Text color */
+    border: none; /* No border */
+    padding: 10px 15px; /* Padding for the button */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition */
 }
 
-.show {
-    display: block;
+.sort-button button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
+.dropdown-content {
+    display: none; /* Hidden by default */
+    position: absolute; /* Position relative to the button */
+    background-color: white; /* Background color of dropdown */
+    min-width: 160px; /* Minimum width */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Shadow for dropdown */
+    z-index: 1; /* Ensure dropdown appears above other elements */
+}
+
+.dropdown-content form {
+    padding: 10px; /* Padding inside dropdown */
+}
+
+.dropdown-content label {
+    display: block; /* Block display for labels */
+    margin: 5px 0; /* Margin for spacing */
+}
+
+.dropdown-content button {
+    background-color: #28a745; /* Apply button color */
+    border: none; /* No border */
+    color: white; /* Text color */
+    padding: 5px 10px; /* Padding for apply button */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition */
+}
+
+.dropdown-content button:hover {
+    background-color: #218838; /* Darker shade on hover */
+}
+
+/* Show dropdown when active */
+.dropdown-content.show {
+    display: block; /* Show dropdown */
 }

@@ -1,4 +1,3 @@
-/* General Styles */
 body {
     font-family: 'Arial', sans-serif;
     background-color: #f4f4f4;
@@ -7,8 +6,8 @@ body {
 }
 
 .container {
-    width: 90%;
-    max-width: 1200px;
+    width: 100%;
+    max-width: 1920px;
     margin: auto;
     overflow: hidden;
 }
@@ -29,12 +28,12 @@ header {
     padding: 10px 20px;
     text-decoration: none;
     border-radius: 5px;
-    transition: background-color 0.3s, transform 0.2s; /* Added transform */
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .logout-button:hover {
-    background-color: #c0392b; /* Darker shade on hover */
-    transform: scale(1.05); /* Slightly enlarge button on hover */
+    background-color: #c0392b;
+    transform: scale(1.05);
 }
 
 /* Content Styles */
@@ -54,7 +53,6 @@ header {
     flex-grow: 1; 
 }
 
-/* Panel Header */
 .panel h2 {
     color: #35424a;
 }
@@ -75,7 +73,7 @@ input[type="number"] {
 
 input[type="text"]:focus,
 input[type="number"]:focus {
-    border-color: #35424a; /* Highlight on focus */
+    border-color: #35424a;
 }
 
 /* Table Styles */
@@ -87,6 +85,7 @@ table {
 th, td {
     border-bottom: 1px solid #ddd; 
     padding: 12px; 
+    text-align: left;
 }
 
 th {
@@ -110,34 +109,79 @@ button {
     padding: 10px 15px;
     cursor: pointer;
     border-radius: 5px;
-    transition: background-color 0.3s, transform 0.2s; /* Added transform */
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 button:hover {
    background-color: #2c3e50; 
-   transform: scale(1.05); /* Slightly enlarge button on hover */
+   transform: scale(1.05);
 }
 
-/* Link Styles */
-a {
-   color: #35424a; 
-   text-decoration: none; 
-   transition: text-decoration 0.3s, color 0.3s; /* Smooth transition for hover */
+/* Search Form Styles */
+.search-form {
+    margin-bottom: 20px;
+    text-align: center;
 }
 
-a:hover {
-   text-decoration: underline; 
-   color: #e8491d; /* Change color on hover for distinction */
+.search-form input[type="text"] {
+    padding: 10px;
+    width: 300px;
+    margin-right: 10px;
 }
 
-/* Alert Message Styles */
-.alert {
-   background-color: #e7f3fe; /* Light blue background for alerts */
-   color: #31708f; /* Darker blue text */
-   padding: 15px;
-   margin-bottom: 20px;
-   border-left: 6px solid #31708f; /* Left border for emphasis */
-   border-radius: 5px; /* Rounded corners */
+.search-form button,
+.reset-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 0.5rem;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.reset-button {
+    background-color: #6c757d;
+}
+
+.search-form button:hover,
+.reset-button:hover {
+    opacity: 0.9;
+}
+
+/* Overlay Styles */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.overlay-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 5px;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+}
+
+.close-btn {
+    color: #35424a;
+    cursor: pointer;
+    margin-top: 15px;
+    display: inline-block;
+}
+
+.close-btn:hover {
+    text-decoration: underline;
 }
 
 /* Responsive Design */
@@ -150,8 +194,16 @@ a:hover {
    }
 
    .logout-button {
-       float:none; /* Stack logout button on smaller screens */
-       display:block; /* Center logout button on small screens */
-       margin-top :10px ; /* Add spacing above logout button */
+       float: none;
+       display: block;
+       margin: 10px auto;
+       text-align: center;
+   }
+
+   .search-form input[type="text"],
+   .search-form button,
+   .reset-button {
+       width: 100%;
+       margin: 5px 0;
    }
 }

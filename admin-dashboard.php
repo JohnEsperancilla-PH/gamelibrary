@@ -1,52 +1,94 @@
 <?php
-include 'db.php'; // Include your database connection file
+include 'db.php';
 include 'checker.php';
 
-// Check if the user is an admin
+// Enhanced Security and Error Handling
 if ($_SESSION['role'] !== 'admin') {
-    header("Location: view-games.php"); // Redirect to a different page if not an admin
+    $_SESSION['error'] = "Unauthorized access. Admin rights required.";
+    header("Location: view-games.php");
     exit();
 }
 
-// Handle adding a new game
+// Validation Function
+function validateInput($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
+
+$message = '';
+$error = '';
+
+// Add Game with Enhanced Validation
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_game'])) {
-    $title = $_POST['title'];
-    $genre = $_POST['genre'];
-    $price = $_POST['price'];
-    $release_year = $_POST['release_year'];
+    $title = validateInput($_POST['title']);
+    $genre = validateInput($_POST['genre']);
+    $price = filter_var($_POST['price'], FILTER_VALIDATE_FLOAT);
+    $release_year = filter_var($_POST['release_year'], FILTER_VALIDATE_INT);
 
-    $stmt = $conn->prepare("INSERT INTO tbl_games (title, genre, price, release_year) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("ssdi", $title, $genre, $price, $release_year);
-    $stmt->execute();
-    $stmt->close();
+    if (empty($title) || empty($genre) || $price === false || $release_year === false) {
+        $error = "Invalid input. Please check all fields.";
+    } else {
+        $stmt = $conn->prepare("INSERT INTO tbl_games (title, genre, price, release_year) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssdi", $title, $genre, $price, $release_year);
+        
+        if ($stmt->execute()) {
+            $message = "Game added successfully!";
+        } else {
+            $error = "Error adding game: " . $stmt->error;
+        }
+        $stmt->close();
+    }
 }
 
-// Handle editing a game
+// Edit Game with Validation
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['edit_game'])) {
-    $game_id = $_POST['game_id'];
-    $title = $_POST['title'];
-    $genre = $_POST['genre'];
-    $price = $_POST['price'];
-    $release_year = $_POST['release_year'];
+    $game_id = filter_var($_POST['game_id'], FILTER_VALIDATE_INT);
+    $title = validateInput($_POST['title']);
+    $genre = validateInput($_POST['genre']);
+    $price = filter_var($_POST['price'], FILTER_VALIDATE_FLOAT);
+    $release_year = filter_var($_POST['release_year'], FILTER_VALIDATE_INT);
 
-    $stmt = $conn->prepare("UPDATE tbl_games SET title = ?, genre = ?, price = ?, release_year = ? WHERE game_id = ?");
-    $stmt->bind_param("ssdii", $title, $genre, $price, $release_year, $game_id);
-    $stmt->execute();
-    $stmt->close();
+    if ($game_id === false || empty($title) || empty($genre) || $price === false || $release_year === false) {
+        $error = "Invalid input. Please check all fields.";
+    } else {
+        $stmt = $conn->prepare("UPDATE tbl_games SET title = ?, genre = ?, price = ?, release_year = ? WHERE game_id = ?");
+        $stmt->bind_param("ssdii", $title, $genre, $price, $release_year, $game_id);
+        
+        if ($stmt->execute()) {
+            $message = "Game updated successfully!";
+        } else {
+            $error = "Error updating game: " . $stmt->error;
+        }
+        $stmt->close();
+    }
 }
 
-// Handle deleting a game
+// Delete Game with Confirmation
 if (isset($_GET['delete'])) {
-    $game_id = $_GET['delete'];
-    $stmt = $conn->prepare("DELETE FROM tbl_games WHERE game_id = ?");
-    $stmt->bind_param("i", $game_id);
-    $stmt->execute();
-    $stmt->close();
+    $game_id = filter_var($_GET['delete'], FILTER_VALIDATE_INT);
+    if ($game_id !== false) {
+        $stmt = $conn->prepare("DELETE FROM tbl_games WHERE game_id = ?");
+        $stmt->bind_param("i", $game_id);
+        
+        if ($stmt->execute()) {
+            $message = "Game deleted successfully!";
+        } else {
+            $error = "Error deleting game: " . $stmt->error;
+        }
+        $stmt->close();
+    }
 }
 
-// Fetch all games
-$sql = "SELECT * FROM tbl_games";
-$result = $conn->query($sql);
+// Fetch games with search functionality
+$search = isset($_GET['search']) ? validateInput($_GET['search']) : '';
+$sql = "SELECT * FROM tbl_games WHERE title LIKE ? OR genre LIKE ?";
+$stmt = $conn->prepare($sql);
+$searchParam = "%" . $search . "%";
+$stmt->bind_param("ss", $searchParam, $searchParam);
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -64,6 +106,24 @@ $result = $conn->query($sql);
             <a href="logout.php" class="logout-button">Logout</a>
         </header>
 
+        <?php if (!empty($message)): ?>
+            <div class="overlay" id="messageOverlay" style="display: flex;">
+                <div class="overlay-content">
+                    <p><?php echo $message; ?></p>
+                    <span class="close-btn" onclick="document.getElementById('messageOverlay').style.display='none'">Close</span>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <?php if (!empty($error)): ?>
+            <div class="overlay" id="errorOverlay" style="display: flex;">
+                <div class="overlay-content">
+                    <p><?php echo $error; ?></p>
+                    <span class="close-btn" onclick="document.getElementById('errorOverlay').style.display='none'">Close</span>
+                </div>
+            </div>
+        <?php endif; ?>
+
         <div class="content">
             <div class="panel">
                 <h2>Add New Game</h2>
@@ -72,8 +132,15 @@ $result = $conn->query($sql);
                     <input type="text" name="genre" placeholder="Genre" required>
                     <input type="number" step="0.01" name="price" placeholder="Price" required>
                     <input type="number" name="release_year" placeholder="Release Year" required>
-                    <button type="submit" name="add_game">Add Game</button>
+                    <button type="submit" name="add_game" onclick="window.location.href='admin-dashboard.php';">Add Game</button>
                 </form>
+
+                <script>
+                    if ( window.history.replaceState ) {
+                            window.history.replaceState( null, null, window.location.href );
+                    }
+                </script>
+
             </div>
 
             <div class="panel">
@@ -91,7 +158,7 @@ $result = $conn->query($sql);
                             <tr>
                                 <td><?php echo htmlspecialchars($row["title"]); ?></td>
                                 <td><?php echo htmlspecialchars($row["genre"]); ?></td>
-                                <td><?php echo htmlspecialchars($row["price"]); ?></td>
+                                <td>$<?php echo htmlspecialchars($row["price"]); ?></td>
                                 <td><?php echo htmlspecialchars($row["release_year"]); ?></td>
                                 <td>
                                     <a href="admin-dashboard.php?edit=<?php echo $row['game_id']; ?>">Edit</a>
@@ -106,27 +173,36 @@ $result = $conn->query($sql);
                     <?php endif; ?>
                 </table>
 
-                <?php
-                // Edit game form
-                if (isset($_GET['edit'])) $game_id = $_GET['edit'];
+                <!-- Edit Game Modal (If Edit is Requested) -->
+                <?php if (isset($_GET['edit'])): 
+                    $game_id = $_GET['edit'];
                     $stmt = $conn->prepare("SELECT * FROM tbl_games WHERE game_id = ?");
                     $stmt->bind_param("i", $game_id);
                     $stmt->execute();
                     $result = $stmt->get_result();
                     $game = $result->fetch_assoc();
                 ?>
-                <h2>Edit Game</h2>
-                <form method="POST">
-                    <input type="hidden" name="game_id" value="<?php echo $game['game_id']; ?>">
-                    <input type="text" name="title" value="<?php echo htmlspecialchars($game['title']); ?>" required>
-                    <input type="text" name="genre" value="<?php echo htmlspecialchars($game['genre']); ?>" required>
-                    <input type="number" step="0.01" name="price" value="<?php echo htmlspecialchars($game['price']); ?>" required>
-                    <input type="number" name="release_year" value="<?php echo htmlspecialchars($game['release_year']); ?>" required>
-                    <button type="submit" name="edit_game">Update Game</button>
-                </form>
-                <?php
-                $stmt->close();
-                ?>
+                    <div class="overlay" id="editOverlay" style="display: flex;">
+                        <div class="overlay-content">
+                            <h2>Edit Game</h2>
+                            <form method="POST">
+                                <input type="hidden" name="game_id" value="<?php echo $game['game_id']; ?>">
+                                <input type="text" name="title" value="<?php echo htmlspecialchars($game['title']); ?>" required>
+                                <input type="text" name="genre" value="<?php echo htmlspecialchars($game['genre']); ?>" required>
+                                <input type="number" step="0.01" name="price" value="<?php echo htmlspecialchars($game['price']); ?>" required>
+                                <input type="number" name="release_year" value="<?php echo htmlspecialchars($game['release_year']); ?>" required>
+                                <button type="submit" name="edit_game" onclick="window.location.href='admin-dashboard.php';">Update Game</button>
+                                <span class="close-btn" onclick="window.location.href='admin-dashboard.php';">Cancel</span>
+                            </form>
+
+                            <script>
+                                if ( window.history.replaceState ) {
+                                        window.history.replaceState( null, null, window.location.href );
+                                }
+                            </script>
+                        </div>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
