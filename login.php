@@ -14,13 +14,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
-
+    
         // Verify the password (assuming you are using password_hash for storing passwords)
         if (password_verify($password, $user['password'])) {
             // Store user information in session
             $_SESSION['username'] = $user['username'];
             $_SESSION['role'] = $user['role']; // Assuming 'role' is the column name
-
+            $_SESSION['id'] = $user['id']; // Store user ID in session
+    
             // Redirect based on user role
             if ($user['role'] === 'admin') {
                 header("Location: admin-dashboard.php");

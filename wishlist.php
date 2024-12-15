@@ -1,10 +1,9 @@
 <?php
+session_start();
 include 'db.php'; // Include your database connection file
-include 'checker.php'; // Include the checker file to access validateInput function
 
-// Check if the user is an admin
-if ($_SESSION['role'] == 'admin') {
-    header("Location: admin-dashboard.php"); // Redirect to a different page if not an admin
+if (!isset($_SESSION['username'])) {
+    header("Location: login.php");
     exit();
 }
 
@@ -31,6 +30,14 @@ $searchParam = "%" . $search . "%";
 $stmt->bind_param("ss", $searchParam, $searchParam);
 $stmt->execute();
 $result = $stmt->get_result();
+
+$user_id = $_SESSION['id']; // Assuming you store user ID in session
+
+$sql = "SELECT g.* FROM tbl_games g JOIN tbl_wishlist w ON g.game_id = w.game_id WHERE w.user_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -38,11 +45,11 @@ $result = $stmt->get_result();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Library</title>
-    <link rel="stylesheet" href="assets/css/view-games.css"> <!-- Link to CSS file -->
+    <title>Your Wishlist</title>
+    <link rel="stylesheet" href="assets/css/view-games.css">
 </head>
 <body>
-    <h1>Game Library</h1> 
+    <h1>Your Wishlist</h1>
 
     <!-- Navbar -->
     <nav class="navbar">
@@ -52,8 +59,8 @@ $result = $stmt->get_result();
         </form>
 
         <!-- Wishlist Button -->
-        <form action="wishlist.php" method="POST" style="display:inline;">
-            <button type="submit" class="logout-button">Wishlist</button>
+        <form action="view-games.php" method="POST" style="display:inline;">
+            <button type="submit" class="logout-button">Return</button>
         </form>
 
         <!-- Sorting Button -->
@@ -109,7 +116,6 @@ $result = $stmt->get_result();
                 <p><strong>Release Year:</strong> <span id="overlay-release-year"></span></p>
                 <form method="POST" action="add_to_wishlist.php" id="wishlist-form">
                     <input type="hidden" name="game_id" id="wishlist-game-id" value="">
-                    <button type="submit" name="add_to_wishlist">Add to Wishlist</button>
                 </form>
                 <div class="close-btn" onclick="closeOverlay()">Close</div>
             </div>
